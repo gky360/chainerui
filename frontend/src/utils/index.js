@@ -1,4 +1,5 @@
 import path from 'path';
+import memoizeOne from 'memoize-one';
 import { lineColorGenerator } from './color';
 
 export * from './color';
@@ -132,7 +133,8 @@ export const sortMethod = (a, b) => {
   return 0;
 };
 
-export const getLogData = (results, stats, projectConfig) => {
+export const getLogData = memoizeOne((results, stats, projectConfig) => {
+  console.log('getLogData');
   const { axes, resultsConfig = {}, lines = {} } = projectConfig;
   const { logKeys = [], xAxisKeys } = stats;
 
@@ -179,7 +181,7 @@ export const getLogData = (results, stats, projectConfig) => {
   const data = Object.values(dataDict);
 
   return data;
-};
+});
 
 export const getPlotLogData = (results, stats, projectConfig) => {
   const { axes, resultsConfig = {} } = projectConfig;
