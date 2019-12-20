@@ -56,22 +56,22 @@ export const truncate = (text: string, options: TruncateOptions = {}): string =>
   return str;
 };
 
-export const getRelativeResultPathName = (project: Project = {}, result: Result = {}): string =>
+export const getRelativeResultPathName = (project: Project, result: Result): string =>
   path.relative(project.pathName || '', result.pathName || '');
 
-export const getGrandParentDirectoryName = (result: Result = {}): string =>
+export const getGrandParentDirectoryName = (result: Result): string =>
   path.basename(path.resolve(result.pathName || '', '..'));
 
-export const displayResultNameFull = (project: Project = {}, result: Result = {}): string =>
+export const displayResultNameFull = (project: Project, result: Result): string =>
   result.name || getRelativeResultPathName(project, result);
 
-export const displayProjectNameFull = (project: Project = {}): string =>
+export const displayProjectNameFull = (project: Project): string =>
   project.name || path.basename(project.pathName || '');
 
-export const displayProjectName = (project: Project = {}, options: TruncateOptions = {}): string =>
+export const displayProjectName = (project: Project, options: TruncateOptions): string =>
   truncate(displayProjectNameFull(project), options);
 
-export const getUrlSafeProjectNameFull = (project: Project = {}): string =>
+export const getUrlSafeProjectNameFull = (project: Project): string =>
   displayProjectNameFull(project).replace(/[^a-z0-9]/gi, '_');
 
 export const isFloat = (value: any): boolean => Number.isFinite(value) && !Number.isInteger(value);
@@ -83,7 +83,7 @@ export const formatLogTooltipLabel = (xAxisKey: string, precision: number) => (
   value: any
 ): string => `${formatLogValue(precision)(value)} ${xAxisKey === 'elapsed_time' ? 's' : xAxisKey}`;
 
-export const getLastLogDict = (result: Result = {}): Log['logDict'] | undefined => {
+export const getLastLogDict = (result: Result): Log['logDict'] | undefined => {
   const { logs = [] } = result;
   const lastLog = logs[logs.length - 1] || {};
   const { logDict } = lastLog;

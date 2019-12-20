@@ -23,9 +23,7 @@ const projectsReducer: Reducer<Projects, EntitiesAction> = (state = {}, action) 
         const projectList = action.payload.projects;
         const projects: Projects = {};
         projectList.forEach((project) => {
-          if (project.id) {
-            projects[project.id] = project;
-          }
+          projects[project.id] = project;
         });
         return projects;
       }
