@@ -22,19 +22,19 @@ type Meta = RSAACall & {
   };
 };
 
-export interface RSAARequestAction {
-  type: string;
+export interface RSAARequestAction<T extends string = string> {
+  type: T;
   meta: Meta;
   error?: boolean;
 }
-export interface RSAASuccessAction<Payload = any> {
-  type: string;
+export interface RSAASuccessAction<T extends string = string, Payload = any> {
+  type: T;
   meta: Meta;
   payload?: Payload;
   error?: boolean;
 }
-export interface RSAAFailureAction {
-  type: string;
+export interface RSAAFailureAction<T extends string = string> {
+  type: T;
   meta: Meta;
   payload?: RequestError | ApiError;
   error?: boolean;

@@ -3,7 +3,7 @@ import { CHART_DOWNLOAD_STATUS } from '../constants';
 export type ProjectId = number;
 
 export interface Project {
-  id?: ProjectId;
+  id: ProjectId;
   pathName?: string;
   name?: string;
 }
@@ -16,7 +16,7 @@ export type ResultId = number;
 
 export interface Log {
   resultId?: ResultId;
-  id?: number;
+  id: number;
   logDict: { [k: string]: any };
 }
 
@@ -36,7 +36,7 @@ export interface CommandSchedule {
 }
 
 interface Command {
-  id?: number;
+  id: number;
   name: string;
   request: {
     created_at: string;
@@ -56,7 +56,7 @@ interface Command {
 export type Commands = Command[];
 
 interface Snapshot {
-  id?: number;
+  id: number;
   iteration: number;
   name: string;
 }
@@ -64,15 +64,16 @@ interface Snapshot {
 export type Snapshots = Snapshot[];
 
 export interface Result {
-  id?: ResultId;
+  id: ResultId;
   pathName?: string;
   name?: string;
   group?: string;
   isUnregistered?: boolean;
-  logs?: Logs;
-  args?: Args;
-  commands?: Commands;
-  snapshots?: Snapshots;
+  logs: Logs;
+  args: Args;
+  commands: Commands;
+  snapshots: Snapshots;
+  logModifiedAt: string;
 }
 
 export interface Results {
