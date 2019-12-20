@@ -7,10 +7,9 @@ import {
   ProjectStatus,
   ProjectsStatus,
   Stats,
-  Result,
   Status,
 } from '../store/types';
-import { RESULT_LIST_SUCCESS } from '../actions/entities';
+import { RESULT_LIST_SUCCESS, EntitiesAction } from '../actions/entities';
 import {
   CHART_DOWNLOAD_STATUS_UPDATE,
   RESULT_SELECT_UPDATE,
@@ -125,15 +124,14 @@ const projectsStatusReducer: Reducer<ProjectsStatus, ProjectsStatusAction> = (
   return state;
 };
 
-// TODO: use ResultListAction
-const statsReducer: Reducer<Stats> = (
+const statsReducer: Reducer<Stats, EntitiesAction> = (
   state = { argKeys: [], logKeys: [], xAxisKeys: [] },
   action
 ) => {
   switch (action.type) {
     case RESULT_LIST_SUCCESS:
-      if (action.payload && action.payload.results) {
-        const resultsList: Result[] = action.payload.results;
+      if (action.payload) {
+        const resultsList = action.payload.results;
         const argKeySet: { [argKey: string]: boolean } = {};
         const logKeySet: { [logKey: string]: boolean } = {};
         resultsList.forEach((result) => {
