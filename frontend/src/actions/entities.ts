@@ -1,5 +1,6 @@
-import { RSAA } from '../middleware/apiMiddleware';
+import { RSAA, RSAAAction } from '../middleware/apiMiddleware';
 import { fetchResultTypes } from '../constants';
+import { ProjectId, Project, ResultId, Result, CommandSchedule } from '../store/types';
 
 // projects API
 
@@ -16,23 +17,23 @@ export const PROJECT_DELETE_REQUEST = 'PROJECT_DELETE_REQUEST';
 export const PROJECT_DELETE_SUCCESS = 'PROJECT_DELETE_SUCCESS';
 export const PROJECT_DELETE_FAILURE = 'PROJECT_DELETE_FAILURE';
 
-export const getProjectList = () => ({
+export const getProjectList = (): RSAAAction => ({
   [RSAA]: {
     types: [PROJECT_LIST_REQUEST, PROJECT_LIST_SUCCESS, PROJECT_LIST_FAILURE],
     endpoint: 'projects',
   },
 });
 
-export const getProject = (projectId) => ({
+export const getProject = (projectId: ProjectId): RSAAAction => ({
   [RSAA]: {
     types: [PROJECT_REQUEST, PROJECT_SUCCESS, PROJECT_FAILURE],
     endpoint: `projects/${projectId}`,
   },
 });
 
-export const updateProject = (project = {}) => {
+export const updateProject = (project: Project = {}): RSAAAction => {
   const { id, name } = project;
-  if (!Number.isInteger(id)) {
+  if (id === undefined || !Number.isInteger(id)) {
     throw new Error('Project id is invalid.');
   }
   return {
@@ -45,7 +46,7 @@ export const updateProject = (project = {}) => {
   };
 };
 
-export const deleteProject = (projectId) => {
+export const deleteProject = (projectId: ProjectId): RSAAAction => {
   if (!Number.isInteger(projectId)) {
     throw new Error('Project id is invalid.');
   }
@@ -77,7 +78,7 @@ export const RESULT_ASSET_REQUEST = 'RESULT_ASSET_REQUEST';
 export const RESULT_ASSET_SUCCESS = 'RESULT_ASSET_SUCCESS';
 export const RESULT_ASSET_FAILURE = 'RESULT_ASSET_FAILURE';
 
-export const getResultList = (projectId, logsLimit = -1, resultType) => {
+export const getResultList = (projectId: ProjectId, logsLimit = -1, resultType): RSAAAction => {
   const resultTypeQuery = resultType === fetchResultTypes[0].id ? '' : '&is_unregistered=1';
 
   return {
@@ -88,16 +89,20 @@ export const getResultList = (projectId, logsLimit = -1, resultType) => {
   };
 };
 
-export const getResult = (projectId, resultId, logsLimit = -1) => ({
+export const getResult = (
+  projectId: ProjectId,
+  resultId: ResultId,
+  logsLimit = -1
+): RSAAAction => ({
   [RSAA]: {
     types: [RESULT_REQUEST, RESULT_SUCCESS, RESULT_FAILURE],
     endpoint: `projects/${projectId}/results/${resultId}?logs_limit=${logsLimit}`,
   },
 });
 
-export const updateResult = (projectId, result = {}) => {
+export const updateResult = (projectId: ProjectId, result: Result = {}): RSAAAction => {
   const { id, name, isUnregistered } = result;
-  if (!Number.isInteger(id)) {
+  if (id === undefined || !Number.isInteger(id)) {
     throw new Error('Result id is invalid.');
   }
   return {
@@ -110,7 +115,10 @@ export const updateResult = (projectId, result = {}) => {
   };
 };
 
-export const patchResults = (projectId, results = []) => {
+export const patchResults = (
+  projectId: ProjectId,
+  results: { id: ResultId; checked: boolean }[] = []
+): RSAAAction => {
   return {
     [RSAA]: {
       types: [RESULTS_PATCH_REQUEST, RESULTS_PATCH_SUCCESS, RESULTS_PATCH_FAILURE],
@@ -121,11 +129,13 @@ export const patchResults = (projectId, results = []) => {
   };
 };
 
+/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 export const clearResultList = () => ({
-  type: RESULT_LIST_CLEAR,
+  type: RESULT_LIST_CLEAR as typeof RESULT_LIST_CLEAR,
 });
+export type ResultClearAction = ReturnType<typeof clearResultList>;
 
-export const getResultAsset = (projectId, resultId) => ({
+export const getResultAsset = (projectId: ProjectId, resultId: ResultId): RSAAAction => ({
   [RSAA]: {
     types: [RESULT_ASSET_REQUEST, RESULT_ASSET_SUCCESS, RESULT_ASSET_FAILURE],
     endpoint: `projects/${projectId}/results/${resultId}/assets`,
@@ -139,12 +149,12 @@ export const COMMAND_CREATE_SUCCESS = 'COMMAND_CREATE_SUCCESS';
 export const COMMAND_CREATE_FAILURE = 'COMMAND_CREATE_FAILURE';
 
 export const createCommand = (
-  projectId,
-  resultId,
-  commandName,
-  requestBody = null,
-  schedule = null
-) => {
+  projectId: ProjectId,
+  resultId: ResultId,
+  commandName: string,
+  requestBody: object | null = null,
+  schedule: CommandSchedule | null = null
+): RSAAAction => {
   if (!Number.isInteger(resultId)) {
     throw new Error('Result id is invalid.');
   }

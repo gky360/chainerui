@@ -30,15 +30,17 @@ interface Arg {
 
 export type Args = Arg[];
 
+export interface CommandSchedule {
+  key: string;
+  value: number;
+}
+
 interface Command {
   id?: number;
   name: string;
   request: {
     created_at: string;
-    schedule?: {
-      key: string;
-      value: number;
-    };
+    schedule?: CommandSchedule;
     body?: object;
   };
   response?: {
