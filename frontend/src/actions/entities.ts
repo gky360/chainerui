@@ -1,6 +1,14 @@
-import { RSAA, RSAAAction } from '../middleware/apiMiddleware';
+import { RSAA, RSAAAction, RSAASuccessAction } from '../middleware/apiMiddleware';
 import { fetchResultTypes } from '../constants';
-import { ProjectId, Project, ResultId, Result, CommandSchedule } from '../store/types';
+import {
+  ProjectId,
+  Project,
+  ResultId,
+  Result,
+  CommandSchedule,
+  Assets,
+  Commands,
+} from '../store/types';
 
 // projects API
 
@@ -23,6 +31,7 @@ export const getProjectList = (): RSAAAction => ({
     endpoint: 'projects',
   },
 });
+export type ProjectListSuccessAction = RSAASuccessAction<{ projects: Project[] }>;
 
 export const getProject = (projectId: ProjectId): RSAAAction => ({
   [RSAA]: {
@@ -30,6 +39,7 @@ export const getProject = (projectId: ProjectId): RSAAAction => ({
     endpoint: `projects/${projectId}`,
   },
 });
+export type ProjectSuccessAction = RSAASuccessAction<{ project: Project }>;
 
 export const updateProject = (project: Project = {}): RSAAAction => {
   const { id, name } = project;
@@ -45,6 +55,7 @@ export const updateProject = (project: Project = {}): RSAAAction => {
     },
   };
 };
+export type ProjectUpdateSuccessAction = RSAASuccessAction<{ project: Project }>;
 
 export const deleteProject = (projectId: ProjectId): RSAAAction => {
   if (!Number.isInteger(projectId)) {
@@ -58,6 +69,7 @@ export const deleteProject = (projectId: ProjectId): RSAAAction => {
     },
   };
 };
+export type ProjectDeleteSuccessAction = RSAASuccessAction<{ project: Project }>;
 
 // results API
 
@@ -88,6 +100,7 @@ export const getResultList = (projectId: ProjectId, logsLimit = -1, resultType):
     },
   };
 };
+export type ResultListSuccessAction = RSAASuccessAction<{ results: Result[] }>;
 
 export const getResult = (
   projectId: ProjectId,
@@ -99,6 +112,7 @@ export const getResult = (
     endpoint: `projects/${projectId}/results/${resultId}?logs_limit=${logsLimit}`,
   },
 });
+export type ResultSuccessAction = RSAASuccessAction<{ result: Result }>;
 
 export const updateResult = (projectId: ProjectId, result: Result = {}): RSAAAction => {
   const { id, name, isUnregistered } = result;
@@ -114,6 +128,7 @@ export const updateResult = (projectId: ProjectId, result: Result = {}): RSAAAct
     },
   };
 };
+export type ResultUpdateSuccessAction = RSAASuccessAction<{ result: Result }>;
 
 export const patchResults = (
   projectId: ProjectId,
@@ -128,6 +143,7 @@ export const patchResults = (
     },
   };
 };
+export type ResultPatchSuccessAction = RSAASuccessAction<{ result: Result }>;
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 export const clearResultList = () => ({
@@ -141,6 +157,7 @@ export const getResultAsset = (projectId: ProjectId, resultId: ResultId): RSAAAc
     endpoint: `projects/${projectId}/results/${resultId}/assets`,
   },
 });
+export type ResultAssetSuccessAction = RSAASuccessAction<{ assets: Assets }>;
 
 // commands API
 
@@ -172,3 +189,4 @@ export const createCommand = (
     },
   };
 };
+export type CommandCreateSuccessAction = RSAASuccessAction<{ commands: Commands }>;
