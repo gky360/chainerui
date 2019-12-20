@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers, Reducer } from 'redux';
 import {
   PROJECT_LIST_SUCCESS,
   PROJECT_SUCCESS,
@@ -11,24 +11,28 @@ import {
   COMMAND_CREATE_SUCCESS,
   RESULT_LIST_CLEAR,
   RESULT_ASSET_SUCCESS,
+  EntitiesAction,
 } from '../actions/entities';
 import { removePartialState } from './utils';
+import { Projects, Result, Args, Commands, Snapshots, Results, Assets } from '../store/types';
 
-const projectsReducer = (state = {}, action) => {
+const projectsReducer: Reducer<Projects, EntitiesAction> = (state = {}, action) => {
   switch (action.type) {
     case PROJECT_LIST_SUCCESS:
-      if (action.payload && action.payload.projects) {
+      if (action.payload) {
         const projectList = action.payload.projects;
-        const projects = {};
+        const projects: Projects = {};
         projectList.forEach((project) => {
-          projects[project.id] = project;
+          if (project.id) {
+            projects[project.id] = project;
+          }
         });
         return projects;
       }
       return state;
     case PROJECT_SUCCESS:
     case PROJECT_UPDATE_SUCCESS:
-      if (action.payload && action.payload.project) {
+      if (action.payload) {
         const { project } = action.payload;
         return {
           ...state,
@@ -37,7 +41,7 @@ const projectsReducer = (state = {}, action) => {
       }
       return state;
     case PROJECT_DELETE_SUCCESS:
-      if (action.payload && action.payload.project) {
+      if (action.payload) {
         const { project } = action.payload;
         return removePartialState(state, project.id);
       }
@@ -47,12 +51,13 @@ const projectsReducer = (state = {}, action) => {
   }
 };
 
-const mergeResult = (result, oldResult) => {
+const mergeResult = (result: Result, oldResult: Result): Result => {
   const newResult = { ...result };
-  ['args', 'commands', 'snapshots'].forEach((k) => {
+  const keys: ('args' | 'commands' | 'snapshots')[] = ['args', 'commands', 'snapshots'];
+  keys.forEach((k) => {
     const data = oldResult[k];
-    if (data && data.length === newResult[k].length) {
-      newResult[k] = data; // eslint-disable-line no-param-reassign
+    if (data && newResult[k] && data.length === newResult[k].length) {
+      (newResult[k] as Args | Commands | Snapshots) = data; // eslint-disable-line no-param-reassign
     }
   });
   if (oldResult.logs && oldResult.logs.length === newResult.logs.length) {
@@ -60,18 +65,20 @@ const mergeResult = (result, oldResult) => {
       newResult.logs = oldResult.logs; // eslint-disable-line no-param-reassign
     }
   }
-  const modified = Object.keys(newResult).some((k) => newResult[k] !== oldResult[k]);
+  const modified = (Object.keys(newResult) as (keyof Result)[]).some(
+    (k) => newResult[k] !== oldResult[k]
+  );
   return modified ? newResult : oldResult;
 };
 
-const resultsReducer = (state = {}, action) => {
+const resultsReducer: Reducer<Results, EntitiesAction> = (state = {}, action) => {
   switch (action.type) {
     case RESULT_LIST_SUCCESS:
-      if (action.payload && action.payload.results) {
+      if (action.payload) {
         const resultList = action.payload.results;
         const resultIds = resultList.map((result) => result.id);
         let modified = Object.keys(state).length !== resultIds.length;
-        const results = {};
+        const results: Results = {};
         resultList.forEach((result) => {
           const oldResult = state[result.id] || {};
           const newResult = mergeResult(result, oldResult);
@@ -83,7 +90,7 @@ const resultsReducer = (state = {}, action) => {
       }
       return state;
     case RESULT_SUCCESS:
-      if (action.payload && action.payload.result) {
+      if (action.payload) {
         const { result } = action.payload;
         return {
           ...state,
@@ -92,7 +99,7 @@ const resultsReducer = (state = {}, action) => {
       }
       return state;
     case RESULT_UPDATE_SUCCESS:
-      if (action.payload && action.payload.result) {
+      if (action.payload) {
         const { result } = action.payload;
         if (result.isUnregistered !== state[result.id].isUnregistered) {
           return removePartialState(state, result.id);
@@ -104,7 +111,7 @@ const resultsReducer = (state = {}, action) => {
       }
       return state;
     case RESULTS_PATCH_SUCCESS:
-      if (action.payload && action.payload.results) {
+      if (action.payload) {
         const { results } = action.payload;
         let currentState = state;
         results.forEach((result) => {
@@ -114,7 +121,7 @@ const resultsReducer = (state = {}, action) => {
       }
       return state;
     case COMMAND_CREATE_SUCCESS:
-      if (action.payload && action.payload.commands) {
+      if (action.payload) {
         const { resultId } = action.meta.body;
         const result = state[resultId];
         return {
@@ -133,10 +140,10 @@ const resultsReducer = (state = {}, action) => {
   }
 };
 
-const assetsReducer = (state = [], action) => {
+const assetsReducer: Reducer<Assets, EntitiesAction> = (state = [], action) => {
   switch (action.type) {
     case RESULT_ASSET_SUCCESS:
-      if (action.payload && action.payload.assets) {
+      if (action.payload) {
         const assetList = action.payload.assets;
         return assetList;
       }

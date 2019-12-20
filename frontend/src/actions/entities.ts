@@ -31,7 +31,10 @@ export const getProjectList = (): RSAAAction => ({
     endpoint: 'projects',
   },
 });
-export type ProjectListSuccessAction = RSAASuccessAction<{ projects: Project[] }>;
+export type ProjectListSuccessAction = RSAASuccessAction<
+  typeof PROJECT_LIST_SUCCESS,
+  { projects: Project[] }
+>;
 
 export const getProject = (projectId: ProjectId): RSAAAction => ({
   [RSAA]: {
@@ -39,11 +42,11 @@ export const getProject = (projectId: ProjectId): RSAAAction => ({
     endpoint: `projects/${projectId}`,
   },
 });
-export type ProjectSuccessAction = RSAASuccessAction<{ project: Project }>;
+export type ProjectSuccessAction = RSAASuccessAction<typeof PROJECT_SUCCESS, { project: Project }>;
 
-export const updateProject = (project: Project = {}): RSAAAction => {
+export const updateProject = (project: Project): RSAAAction => {
   const { id, name } = project;
-  if (id === undefined || !Number.isInteger(id)) {
+  if (!Number.isInteger(id)) {
     throw new Error('Project id is invalid.');
   }
   return {
@@ -55,7 +58,10 @@ export const updateProject = (project: Project = {}): RSAAAction => {
     },
   };
 };
-export type ProjectUpdateSuccessAction = RSAASuccessAction<{ project: Project }>;
+export type ProjectUpdateSuccessAction = RSAASuccessAction<
+  typeof PROJECT_UPDATE_SUCCESS,
+  { project: Project }
+>;
 
 export const deleteProject = (projectId: ProjectId): RSAAAction => {
   if (!Number.isInteger(projectId)) {
@@ -69,7 +75,10 @@ export const deleteProject = (projectId: ProjectId): RSAAAction => {
     },
   };
 };
-export type ProjectDeleteSuccessAction = RSAASuccessAction<{ project: Project }>;
+export type ProjectDeleteSuccessAction = RSAASuccessAction<
+  typeof PROJECT_DELETE_SUCCESS,
+  { project: Project }
+>;
 
 // results API
 
@@ -90,7 +99,12 @@ export const RESULT_ASSET_REQUEST = 'RESULT_ASSET_REQUEST';
 export const RESULT_ASSET_SUCCESS = 'RESULT_ASSET_SUCCESS';
 export const RESULT_ASSET_FAILURE = 'RESULT_ASSET_FAILURE';
 
-export const getResultList = (projectId: ProjectId, logsLimit = -1, resultType): RSAAAction => {
+// TODO: avoid any
+export const getResultList = (
+  projectId: ProjectId,
+  logsLimit = -1,
+  resultType: any
+): RSAAAction => {
   const resultTypeQuery = resultType === fetchResultTypes[0].id ? '' : '&is_unregistered=1';
 
   return {
@@ -100,7 +114,10 @@ export const getResultList = (projectId: ProjectId, logsLimit = -1, resultType):
     },
   };
 };
-export type ResultListSuccessAction = RSAASuccessAction<{ results: Result[] }>;
+export type ResultListSuccessAction = RSAASuccessAction<
+  typeof RESULT_LIST_SUCCESS,
+  { results: Result[] }
+>;
 
 export const getResult = (
   projectId: ProjectId,
@@ -112,11 +129,11 @@ export const getResult = (
     endpoint: `projects/${projectId}/results/${resultId}?logs_limit=${logsLimit}`,
   },
 });
-export type ResultSuccessAction = RSAASuccessAction<{ result: Result }>;
+export type ResultSuccessAction = RSAASuccessAction<typeof RESULT_SUCCESS, { result: Result }>;
 
-export const updateResult = (projectId: ProjectId, result: Result = {}): RSAAAction => {
+export const updateResult = (projectId: ProjectId, result: Result): RSAAAction => {
   const { id, name, isUnregistered } = result;
-  if (id === undefined || !Number.isInteger(id)) {
+  if (!Number.isInteger(id)) {
     throw new Error('Result id is invalid.');
   }
   return {
@@ -128,7 +145,10 @@ export const updateResult = (projectId: ProjectId, result: Result = {}): RSAAAct
     },
   };
 };
-export type ResultUpdateSuccessAction = RSAASuccessAction<{ result: Result }>;
+export type ResultUpdateSuccessAction = RSAASuccessAction<
+  typeof RESULT_UPDATE_SUCCESS,
+  { result: Result }
+>;
 
 export const patchResults = (
   projectId: ProjectId,
@@ -143,7 +163,10 @@ export const patchResults = (
     },
   };
 };
-export type ResultPatchSuccessAction = RSAASuccessAction<{ result: Result }>;
+export type ResultPatchSuccessAction = RSAASuccessAction<
+  typeof RESULTS_PATCH_SUCCESS,
+  { results: { id: ResultId; is_unregistered: boolean }[] }
+>;
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 export const clearResultList = () => ({
@@ -157,7 +180,10 @@ export const getResultAsset = (projectId: ProjectId, resultId: ResultId): RSAAAc
     endpoint: `projects/${projectId}/results/${resultId}/assets`,
   },
 });
-export type ResultAssetSuccessAction = RSAASuccessAction<{ assets: Assets }>;
+export type ResultAssetSuccessAction = RSAASuccessAction<
+  typeof RESULT_ASSET_SUCCESS,
+  { assets: Assets }
+>;
 
 // commands API
 
@@ -189,4 +215,20 @@ export const createCommand = (
     },
   };
 };
-export type CommandCreateSuccessAction = RSAASuccessAction<{ commands: Commands }>;
+export type CommandCreateSuccessAction = RSAASuccessAction<
+  typeof COMMAND_CREATE_SUCCESS,
+  { commands: Commands }
+>;
+
+export type EntitiesAction =
+  | ProjectListSuccessAction
+  | ProjectSuccessAction
+  | ProjectUpdateSuccessAction
+  | ProjectDeleteSuccessAction
+  | ResultListSuccessAction
+  | ResultSuccessAction
+  | ResultUpdateSuccessAction
+  | ResultPatchSuccessAction
+  | ResultClearAction
+  | ResultAssetSuccessAction
+  | CommandCreateSuccessAction;
