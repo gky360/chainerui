@@ -6,16 +6,14 @@ export const RSAA = '@@chainerui/RSAA';
 
 export interface RSAACall {
   endpoint: string;
-  method: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
+  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
   types: [RSAARequestType, RSAASuccessType, RSAAFailureType];
-  body?: BodyInit | null;
+  body?: any;
 }
 
 export interface RSAAAction {
   [RSAA]: RSAACall;
 }
-
-type Payload = any;
 
 type Meta = RSAACall & {
   httpRequest: {
@@ -27,10 +25,9 @@ type Meta = RSAACall & {
 export interface RSAARequestAction {
   type: string;
   meta: Meta;
-  payload?: Payload;
   error?: boolean;
 }
-export interface RSAASuccessAction {
+export interface RSAASuccessAction<Payload = any> {
   type: string;
   meta: Meta;
   payload?: Payload;
@@ -39,7 +36,7 @@ export interface RSAASuccessAction {
 export interface RSAAFailureAction {
   type: string;
   meta: Meta;
-  payload?: Payload;
+  payload?: RequestError | ApiError;
   error?: boolean;
 }
 
